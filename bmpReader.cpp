@@ -58,20 +58,70 @@ int isMul4(int n){
 
 
 
+Pixel mixPixels(Pixel pixel1, Pixel pixel2){
+    Pixel tmp;
+    tmp.r = (pixel1.r + pixel2.r)/2 ;
+    tmp.g = (pixel1.r + pixel2.r)/2;
+    tmp.b = (pixel1.r + pixel2.r)/2;
+    return tmp;
+
+} 
+
+
+
+Pixel bilinealInterpolation(Pixel pixela1, Pixel pixela2, Pixel pixelb1, Pixel pixelb2, float x, float y){
+
+    Pixel tmp;
+
+    int sum1 = pixela1.r * (1 - x) * ( 1 - y);
     
+    int sum2 = pixelb1.r * (x) * (1 - y);
+    
+    int sum3 = pixela2.r * (1 - x) * (y);
+    
+    int sum4 = pixelb2.r * x * y;
+    
+    
+    int newRed = pixela1.r * (1 - x) * ( 1 - y) +
+            pixelb1.r * (x) * (1 - y) +
+            pixela2.r * (1-x) * (y) +
+            pixelb2.r * x * y;
+
+    int newGreen = pixela1.g * (1 - y) * ( 1 - y) +
+            pixelb1.g * (x) * (1 - y) +
+            pixela2.g * (1-x) * (y) +
+            pixelb2.g * x * y;
+
+    int newBlue = pixela1.b * (1 - y) * ( 1 - y) +
+            pixelb1.b * (x) * (1 - y) +
+            pixela2.b * (1-x) * (y) +
+            pixelb2.b * x * y;
+
+    tmp.r = newRed;
+    tmp.g = newGreen;
+    tmp.b = newBlue;
+
+    return tmp;
+
+}
 
 
-int main(){
+int main(int argc, char* argv[]){
+    string filename;
 
-	cout << "sizeof pixel" << sizeof(Pixel) << endl;
-	cout << "----------------------" << endl;
+    if (argc >= 2) {
+        filename = argv[1];
+
+    }else{
+
+        cout << "Imagen de entrada: ";
+        getline(cin, filename);
+
+
+    }
 
 	bmpHeader imageHeader;
-
-	string filename;
-	cout << "Imagen de entrada: ";
-	getline(cin, filename);
-
+    cout << filename << endl;
 
 	ifstream image(filename.c_str(), std::ios::binary );
 
@@ -92,9 +142,11 @@ int main(){
 
     	image.seekg((int)imageHeader.offset , ios_base::beg	 );
 
-    	Pixel pixels[(int)imageHeader.width * (int)imageHeader.height];
+    	//Pixel pixels[(int)imageHeader.width * (int)imageHeader.height];
+        Pixel pixels[(int)imageHeader.width ][(int)imageHeader.height];
 
 
+        cout << "pixels buffer: "<< sizeof(pixels) <<  endl;
     	image.read((char*)&pixels,sizeof(pixels));
 
       	image.close();
@@ -104,7 +156,8 @@ int main(){
 
 
     	//Reservamos matriz del doble de tamaño 
-    	Pixel newPixels[(int)imageHeader.width*2 * (int)imageHeader.height* 2];
+    	//Pixel newPixels[(int)imageHeader.width*2 * (int)imageHeader.height* 2];
+        Pixel newPixels[(int)imageHeader.width*2] [(int)imageHeader.height* 2];
 
   		//Lets create a big image
 
@@ -128,61 +181,73 @@ int main(){
 
 
 
-    
+        Pixel tmpPix = bilinealInterpolation(red,red,blanco,blanco,0.5,0.5);
 
-		cout << "Relleno de negro" << endl;
 
-        for(int i=0; i< (int)imageHeader.width*2 *(int)imageHeader.height *2 ; i++){
 
-                
-                    newPixels[i] = negro;
-            
+        cout << "r: " << (int)tmpPix.r << "g: " << (int)tmpPix.g << "b: " << (int)tmpPix.b << endl;
+ 		cout << "Relleno de negro" << endl;
+
+        for(int i=0; i< (int)imageHeader.width*2  ; i++){
+                for(int j=0; j< (int)imageHeader.height *2 ; j++){
+                    newPixels[i][j] = negro;
+            }
         }
-
-
-
-
 
         int padding = isMul4(imageHeader.width*2*3) - imageHeader.width*2*3;
 
         cout << "El padding es: "<< padding << endl;
         int n=0;
+        int m=0;
         Pixel tmp;
         tmp = red;
     	for(int i=0; i< (int)imageHeader.width*2 ; i++){
-
+            n = (i+1) /2;
+            m = 0;
     		for(int j=0; j < (int)imageHeader.height*2; j++){
+                //cout << i<< " " << j << endl;
+
     			if(j%2 == 1){
 
-                    newPixels[i*imageHeader.width*2 + j] = red;
-                }else if(i%2 == 1){
+                    //newPixels[i][j] = negro;
 
-                        newPixels[i*imageHeader.width*2 + j] = red;
 
-                }else{
-                    newPixels[i*imageHeader.width*2 + j] = pixels[n];
-                    tmp = pixels[n];
 
-                    n++;
+                if(i != 0 && j != 0 && i < (imageHeader.width-1) * 2  && j < (imageHeader.height-1) * 2){
+                   
+                  
+                          newPixels[i][j] = bilinealInterpolation( pixels[i/2][j/2],pixels[i/2-1][j/2],pixels[i/2][j/2-1],pixels[i/2-1][j/2-1],0.5,0.5 );  
 
                 }
 
 
-    				//newPixels[(i + (j+4)*(int)imageHeader.height)*2 ] = pixels[i+j*(int)imageHeader.height];
+                }else if(i%2 == 1){
 
-    			
-                    //fila de 8 pixeles negros
+                    //newPixels[i] [j] = red;
+
+
+
+
+                if(i != 0 && j != 0 && i < (imageHeader.width-1)*2  && j < (imageHeader.height-1)*2 ){
+                
+                          newPixels[i][j] = bilinealInterpolation( pixels[i/2][j/2],pixels[i/2-1][j/2],pixels[i/2][j/2-1],pixels[i/2-1][j/2-1],0.5,0.5 );  
+                 }
+
+                }else{
+                   // cout <<  "n: " << n<< " m: " << m << endl;
+
+                    newPixels[i][j] = pixels[n][m];
+                    tmp = pixels[n][m];
+
+                    m++;
+                }
+
+
 
 
     		}
 
         }
-            
-    
- 	
-    		
-
-    	
 //
         imageHeader.width *=2;
 		imageHeader.height *=2;
