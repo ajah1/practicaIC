@@ -1,1 +1,28 @@
+ > Buscando cosicas para la documentación D:
  
+ ---------- resumen del pdf / hacer ---------
+ 
+ > Defender mediante métricas
+ > Arquitecturas idóneas para la paralelización
+ > Estudiar impacto de los parámetros de compilación
+ > Estimar ganáncias y eficiencia de la paralelización
+ 
+ 
+ > Estudiar la codificación del programa
+ 	- CFG: desvelar "trozos" paralelizables
+ 	- Acceso/Estructurar las variables utilizadas
+ 	- Posibles problemas con la caché
+ 	- ¿Permite variar la carga?
+ 	
+ > Parámetros de compilación que mas pueden beneficiar
+ 
+ > Gráficas del rendimiento con los distintios parámetros
+ 
+ 
+----------------- índice obligatorio -----------------
+ 1. Objetivos
+ 2. Presentación del problemas propuesto
+ 3. Estudio pormenorizado de la aplicación propuesta
+ 4. Análisis del rendimiento
+ 5. Defensa del programa (¿es paralelizable?)
+ 6. Arquitecturas paralelas idóneas para la ejecución del programa paralelizado
