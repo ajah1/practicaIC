@@ -1,0 +1,107 @@
+> -O (por defecto)
+
+Tiempo Final:   0.004
+Tiempo Final:   0.008
+Tiempo Final:   0.036
+Tiempo Final:   0.14
+Tiempo Final:   0.552
+Tiempo Final:   2.208
+Tiempo Final:   8.92
+Tiempo Final:   35.752
+
+
+> -O2
+
+Tiempo Final:   0.004
+Tiempo Final:   0.008
+Tiempo Final:   0.02
+Tiempo Final:   0.072
+Tiempo Final:   0.292
+Tiempo Final:   1.156
+Tiempo Final:   4.68
+Tiempo Final:   18.74
+
+> -O3
+
+Tiempo final: 0.004
+Tiempo final: 0.008
+Tiempo final: 0.016
+Tiempo final: 0.06
+Tiempo final: 0.256
+Tiempo final: 1.02
+Tiempo final: 4.168
+Tiempo final: 16.684
+
+> Hay diferentes tipos de optimizaciones, en general mejoran el espacio y tiempo, sacrificando
+otros aspectos. Algunas optimizaciones mejoran ambos aspectos a expensas de generar un fichero
+binario más largo o reduciendo el binario obtiendo un mayor tiempo de ejecución.
+
+> Por ejemplo, el espacio se puede optimizar "empaquetando" juntos los datos y funciones. Y
+el tiempo se puede optimizar alineando los datos para satisfacer los requisitos de la arquitectura y 
+hacer un mejor uso de la caché, pero se aumenta el espacio ocupado.
+
+> Otros ejemplos en los que se sacrifica el espacio en contra de un mejor tiempo son:
+
+	-Loop unrolling: usado en bucles pequeños, transformando estos a instrucciones individuales
+	reduciendo / eliminando las comprobaciones en el bucle.
+
+	-Function inlining: en lugar de hacer una llamada a una función se "pega" el código de esta 		donde se haría la llamada, evitando saltos innecesarios en la pila.
+
+	-Code reordening
+
+
+> El compilador g++ ofrece cuatro niveles de optimización:
+
+	-O0: por defecto, reduce el tiempo de compilación, no da problemas al 
+
+	-O1: el compilador intenta reducir el tamaño del código, con pocas optimizaciones que mejoren
+	el tiempo de ejecución
+
+	-O2: Optimiza mucho más,  mejorando tanto el espacio como el tiempo, a este se le incluyen
+	todas las del nivel O1 además de nuevas.
+
+	-O3: mejora aun más la optimización.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
