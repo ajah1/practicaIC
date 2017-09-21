@@ -52,20 +52,23 @@ hacer un mejor uso de la caché, pero se aumenta el espacio ocupado.
 
 > El compilador g++ ofrece cuatro niveles de optimización:
 
-	-O0: por defecto, reduce el tiempo de compilación, no da problemas al 
+	-O0: por defecto, reduce el tiempo de compilación, no da problemas al depurar
 
 	-O1: el compilador intenta reducir el tamaño del código, con pocas optimizaciones que mejoren
 	el tiempo de ejecución
 
 	-O2: Optimiza mucho más,  mejorando tanto el espacio como el tiempo, a este se le incluyen
-	todas las del nivel O1 además de nuevas.
+	todas las del nivel O1 además de otras nuevas.
 
 	-O3: mejora aun más la optimización.
 
 
 
 
+> Flags de optimización que pueden mejorar nuestro programa
 
+
+-fipa-cp
 
 
 
