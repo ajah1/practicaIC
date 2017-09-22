@@ -87,13 +87,13 @@ Tiempo final: 16.684
 	-fpartial-inlining: Esta optimización hace parte de la funciones en linea.
 	
 	Tiempo final: 0.004
-	Tiempo final: 0.004
+	Tiempo final: 0.008
 	Tiempo final: 0.024
-	Tiempo final: 0.072
-	Tiempo final: 0.292
-	Tiempo final: 1.168
-	Tiempo final: 4.684
-	Tiempo final: 18.672
+	Tiempo final: 0.1
+	Tiempo final: 0.42
+	Tiempo final: 1.716
+	Tiempo final: 6.936
+	Tiempo final: 27.872
 	
 	
 	-fipa-icf: realiza un plegado de codigo identico en funciones y variable.
@@ -101,19 +101,25 @@ Tiempo final: 16.684
 	
 	
 	Tiempo final: 0.004
-	Tiempo final: 0.016
-	Tiempo final: 0.048
-	Tiempo final: 0.124
-	Tiempo final: 0.312
-	Tiempo final: 1.168
-	Tiempo final: 5.684
-	Tiempo final: 20.672
+	Tiempo final: 0.008
+	Tiempo final: 0.028
+	Tiempo final: 0.104
+	Tiempo final: 0.424
+	Tiempo final: 1.692
+	Tiempo final: 6.912
+	Tiempo final: 28.052
 
 
-
-
-
-
+	-las tres optimizaciones juntas
+	
+	Tiempo final: 0.004
+	Tiempo final: 0.008
+	Tiempo final: 0.028
+	Tiempo final: 0.104
+	Tiempo final: 0.424
+	Tiempo final: 1.692
+	Tiempo final: 6.912
+	Tiempo final: 28.052
 
 
 
