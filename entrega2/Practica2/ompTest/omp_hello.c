@@ -1,26 +1,26 @@
 #include <omp.h>
-#include <stdio.h>
-#include <stdlib.h>
+#define N 1000
+#define CHUNKSIZE 100
 
-int main (int argc, char *argv[]) 
-{
-int nthreads, tid;
+int main(int argc, char *argv[]) {
+  int i, chunk;
+  float a[N], b[N], c[N];
+  /* Inicializamos los vectores */
+    for (i=0; i < N; i++){
+      a[i] = b[i] = i * 1.0;
 
-/* Fork a team of threads giving them their own copies of variables */
-#pragma omp parallel private(nthreads, tid)
-  {
 
-  /* Obtain thread number */
-  tid = omp_get_thread_num();
-  printf("Hello World from thread = %d\n", tid);
-
-  /* Only master thread does this */
-  if (tid == 0) 
-    {
-    nthreads = omp_get_num_threads();
-    printf("Number of threads = %d\n", nthreads);
     }
+  
+  chunk = CHUNKSIZE;
 
-  }  /* All threads join master thread and disband */
-
+  #pragma omp parallel shared(a,b,c,chunk) private(i)
+  {
+    #pragma omp for schedule(dynamic,chunk) nowait
+    for (i=0; i < N; i++)
+    {
+         c[i] = a[i] + b[i];
+    }
+  }
+  /* end of parallel region */
 }

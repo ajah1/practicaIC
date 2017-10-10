@@ -2,6 +2,10 @@
 #include <sys/resource.h>
 
 #include "lib/EasyBMP.h"
+#include <omp.h>
+
+#define N 1000
+#define CHUNKSIZE 100
 
 
 using namespace std;
@@ -111,48 +115,56 @@ int main(int argc, char* argv[]){
       //obtenemos tiemoo
       long double ini = tiempo();
 
+int chunk = CHUNKSIZE;
 
     //Bucles para recorrer todo los pixeles
-	for(int i=0; i< width ; i++){
+  #pragma omp parallel shared(OriginalImage,FinalImage,chunk)
+    {
 
-    		for(int j=0; j < height; j++){
 
-                //
-    			if(j%2 == 1){ // Si se trata de una columna impar
-                    if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
-                            RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
-                            RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
-                            RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
-                            RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
+    #pragma omp for schedule(dynamic,chunk) nowait
+        for(int i=0; i< width ; i++){
 
-                            RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.45,0.45 );  
+                    for(int j=0; j < height; j++){
+
+                        //
+                        if(j%2 == 1){ // Si se trata de una columna impar
+                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
+                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
+                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
+                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
+                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
+
+                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.45,0.45 );  
+                                    
+                                    FinalImage.SetPixel(i,j,tmp); 
+
+                            }
+                        }else if(i%2 == 1){// si se trata de una fila impar
+                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
+                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
+                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
+                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
+                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
+
+                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.55,0.55 );  
+                                    
+                                    FinalImage.SetPixel(i,j,tmp);                 
+                            }
+                        }else{// una copia exacta del pixel original
+                               
+                                FinalImage.SetPixel(i,j,OriginalImage.GetPixel(i/2,j/2));
                             
-                            FinalImage.SetPixel(i,j,tmp); 
+                        }
+
+
+
 
                     }
-                }else if(i%2 == 1){// si se trata de una fila impar
-                    if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
-                            RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
-                            RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
-                            RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
-                            RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
 
-                            RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.55,0.55 );  
-                            
-                            FinalImage.SetPixel(i,j,tmp);                 
-                    }
-                }else{// una copia exacta del pixel original
-                       
-                        FinalImage.SetPixel(i,j,OriginalImage.GetPixel(i/2,j/2));
-                    
-                }
-
-
-
-
-    		}
-
-        }    
+                }    
+  }
+	
     
     
     
