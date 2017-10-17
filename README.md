@@ -17,3 +17,6 @@ https://goo.gl/kRVkyZ
 Ademas de la bibiliografia propia de la practica, debemos acreditar el uso de la siguiente libreria:
 
 http://easybmp.sourceforge.net/
+
+
+http://proquest.safaribooksonline.com/book/programming/9780123742605/5dot1dot-getting-started/navpoint-b978-6262
