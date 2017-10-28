@@ -110,7 +110,7 @@ void interpolate(int i, int j,BMP &OriginalImage, BMP &FinalImage, int height, i
 
 int main(int argc, char* argv[]){
     string filename;
-    int thread_count = 4;
+    int thread_count = 4s;
     if (argc >= 2) {
         filename = argv[1];
 
@@ -168,28 +168,12 @@ int chunk = CHUNKSIZE;
 	int idThread = omp_get_thread_num() ;
 
 
-
-
-        if(i % nThreads == idThread ){
-
-
-
 					# pragma omp for nowait 
 			                for(int j=idThread; j < height; j += nThreads){
 
 			       			      interpolate(i,j,OriginalImage,FinalImage,height,width);
 
 			                }
-
-					
-
-
-        }
-
-
-
-
-
 
                 }    
 
