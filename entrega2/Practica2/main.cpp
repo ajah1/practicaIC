@@ -73,9 +73,49 @@ RGBApixel bilinealInterpolation(RGBApixel pixela1, RGBApixel pixela2, RGBApixel 
 }
 
 
+
+
+
+void interpolate(int i, int j,BMP &OriginalImage, BMP &FinalImage, int height, int width ){
+
+
+	                        if(j%2 == 1){ // Si se trata de una columna impar
+                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
+                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
+                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
+                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
+                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
+
+                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.45,0.45 );  
+                                    
+                                    FinalImage.SetPixel(i,j,tmp); 
+
+                            }
+                        }else if(i%2 == 1){// si se trata de una fila impar
+                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
+                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
+                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
+                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
+                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
+
+                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.55,0.55 );  
+                                    
+                                    FinalImage.SetPixel(i,j,tmp);                 
+                            }
+                        }else{// una copia exacta del pixel original
+                               
+                                FinalImage.SetPixel(i,j,OriginalImage.GetPixel(i/2,j/2));
+                            
+                        }
+}
+
+
+
 int main(int argc, char* argv[]){
     string filename;
-    int thread_count = 3;
+    int thread_count_i = 4;
+    int thread_count_j = 2;
+
     if (argc >= 2) {
         filename = argv[1];
 
@@ -119,98 +159,65 @@ int chunk = CHUNKSIZE;
 
     //Bucles para recorrer todo los pixeles
 
+/*
+id * width/total = 0 * 1200/2 =0
+1 * 1200/2 = 600
+
+
+0*(1200/3)=0 -> 400
+1*(1200/3)=400 >800
+2*(1200/3)=800 >1200
+
+*/
+
+#pragma omp parallel  num_threads(thread_count_i) default(none) shared(height, width,OriginalImage,FinalImage) 
+{
+
+//	printf("%s\n","Hilo " );
+
+	int inicio = omp_get_thread_num() * (width/omp_get_num_threads());
+	int fin = (inicio +width/omp_get_num_threads()) ;
+
+	//printf("Inicio: %d\n",inicio );
+	//printf("Fin: %d\n",fin );
+
+	int i;
+
+		for(i = inicio ; i<  fin   ; i++ ){
+
+	//printf("Inicio: %d\n",inicio );
+	//printf("Fin: %d\n",fin );
+
+
+			//printf("%d\n",i );
+
+            for(int j=0; j < height; j++){
+
+                interpolate(i,j,OriginalImage,FinalImage,height,width);
+            }
+        }    
+
+    
 
 
 
 
-        for(int i=0; i< width ; i++){
-
-
-        	if(i % 2 == 0){
-# pragma omp parallel for num_threads(thread_count) default(none) shared(height, i, width,OriginalImage,FinalImage)
-                    for(int j=0; j < height; j+=2){
-
-                        if(j%2 == 1){ // Si se trata de una columna impar
-                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
-                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
-                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
-                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
-                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
-
-                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.45,0.45 );  
-                                    
-                                    FinalImage.SetPixel(i,j,tmp); 
-
-                            }
-                        }else if(i%2 == 1){// si se trata de una fila impar
-                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
-                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
-                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
-                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
-                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
-
-                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.55,0.55 );  
-                                    
-                                    FinalImage.SetPixel(i,j,tmp);                 
-                            }
-                        }else{// una copia exacta del pixel original
-                               
-                                FinalImage.SetPixel(i,j,OriginalImage.GetPixel(i/2,j/2));
-                            
-                        }
-                    }
-
-        	}else{
-# pragma omp parallel for num_threads(thread_count) default(none) shared(height, i, width,OriginalImage,FinalImage)
-                    for(int j=1; j < height-1; j+=2){
-
-                        if(j%2 == 1){ // Si se trata de una columna impar
-                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
-                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
-                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
-                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
-                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
-
-                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.45,0.45 );  
-                                    
-                                    FinalImage.SetPixel(i,j,tmp); 
-
-                            }
-                        }else if(i%2 == 1){// si se trata de una fila impar
-                            if(i != 0 && j != 0 && i < width - 1  && j < height -1){ // no estamos en un borde
-                                    RGBApixel pixel1 = OriginalImage.GetPixel(i/2,j/2);
-                                    RGBApixel pixel2 = OriginalImage.GetPixel((i+1)/2,j/2);
-                                    RGBApixel pixel3 = OriginalImage.GetPixel(i/2,(j+1)/2);
-                                    RGBApixel pixel4 = OriginalImage.GetPixel((i+1)/2,(j+1)/2);
-
-                                    RGBApixel tmp = bilinealInterpolation( pixel1,pixel2,pixel3,pixel4,0.55,0.55 );  
-                                    
-                                    FinalImage.SetPixel(i,j,tmp);                 
-                            }
-                        }else{// una copia exacta del pixel original
-                               
-                                FinalImage.SetPixel(i,j,OriginalImage.GetPixel(i/2,j/2));
-                            
-                        }
-                    }
-
-        	}
+}
 
 
 
 
+/*
+# pragma omp parallel for num_threads(thread_count_i) default(none) shared(height, width,OriginalImage,FinalImage)
+        for(int i=0; i< width ; i ++ ){
+            for(int j=omp_get_thread_num(); j < height; j +=  omp_get_num_threads()){
+        	//printf("%d\n",j );
 
+                interpolate(i,j,OriginalImage,FinalImage,height,width);
+            }
+        }
 
-
-
-
-
-
-
-
-
-
-                }    
+*/
   
 	
     
