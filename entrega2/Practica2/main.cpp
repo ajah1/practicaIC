@@ -74,8 +74,6 @@ RGBApixel bilinealInterpolation(RGBApixel pixela1, RGBApixel pixela2, RGBApixel 
 
 
 
-
-
 void interpolate(int i, int j,BMP &OriginalImage, BMP &FinalImage, int height, int width ){
 
 
@@ -110,12 +108,9 @@ void interpolate(int i, int j,BMP &OriginalImage, BMP &FinalImage, int height, i
 }
 
 
-
 int main(int argc, char* argv[]){
     string filename;
-    int thread_count_i = 4;
-    int thread_count_j = 2;
-
+    int thread_count = 4;
     if (argc >= 2) {
         filename = argv[1];
 
@@ -159,70 +154,48 @@ int chunk = CHUNKSIZE;
 
     //Bucles para recorrer todo los pixeles
 
-/*
-id * width/total = 0 * 1200/2 =0
-1 * 1200/2 = 600
 
 
-0*(1200/3)=0 -> 400
-1*(1200/3)=400 >800
-2*(1200/3)=800 >1200
-
-*/
-
-#pragma omp parallel  num_threads(thread_count_i) default(none) shared(height, width,OriginalImage,FinalImage) 
-{
-
-//	printf("%s\n","Hilo " );
-
-	int inicio = omp_get_thread_num() * (width/omp_get_num_threads());
-	int fin = (inicio +width/omp_get_num_threads()) ;
-
-	//printf("Inicio: %d\n",inicio );
-	//printf("Fin: %d\n",fin );
-
-	int i;
-
-		for(i = inicio ; i<  fin   ; i++ ){
-
-	//printf("Inicio: %d\n",inicio );
-	//printf("Fin: %d\n",fin );
 
 
-			//printf("%d\n",i );
+        for(int i=0; i< width ; i++){
 
-            for(int j=0; j < height; j++){
+           #pragma omp parallel  num_threads(thread_count) default(none) shared(height, i, width,OriginalImage,FinalImage)
+        {
 
-                interpolate(i,j,OriginalImage,FinalImage,height,width);
-            }
-        }    
 
-    
+	int nThreads = omp_get_num_threads();
+	int idThread = omp_get_thread_num() ;
 
+
+
+
+        if(i % nThreads == idThread ){
+
+
+
+					# pragma omp for nowait 
+			                for(int j=idThread; j < height; j += nThreads){
+
+			       			      interpolate(i,j,OriginalImage,FinalImage,height,width);
+
+			                }
+
+					
+
+
+        }
+
+
+
+
+
+
+                }    
 
 
 
 }
-
-
-
-
-/*
-# pragma omp parallel for num_threads(thread_count_i) default(none) shared(height, width,OriginalImage,FinalImage)
-        for(int i=0; i< width ; i ++ ){
-            for(int j=omp_get_thread_num(); j < height; j +=  omp_get_num_threads()){
-        	//printf("%d\n",j );
-
-                interpolate(i,j,OriginalImage,FinalImage,height,width);
-            }
-        }
-
-*/
-  
-	
-    
-    
-    
         //ordenamos
 
 
