@@ -27,4 +27,4 @@ https://lsi.ugr.es/jmantas/ppr/ayuda/mpi_ayuda.php
 
 
 1007747072.0;tcp://172.20.43.142:36856+1007747073.0;tcp://172.20.43.142::300
-
+http://silveiraneto.net/estudos/mpi-client-server/
