@@ -24,3 +24,6 @@ http://proquest.safaribooksonline.com/book/programming/9780123742605/5dot1dot-ge
 PRACTICA 3 BIBILIOGARFIA:
 
 https://lsi.ugr.es/jmantas/ppr/ayuda/mpi_ayuda.php
+
+
+ 1068433408.0;tcp://172.20.43.142:45065+1068433409.0;tcp://172.20.43.142::300
