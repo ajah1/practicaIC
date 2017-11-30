@@ -133,10 +133,11 @@ int main(int argc, char* argv[]){
 
 
 
-
     BMP FinalImage;
+
     FinalImage.SetSize(OriginalImage.TellWidth()*2,OriginalImage.TellHeight()*2 );
     FinalImage.SetBitDepth(OriginalImage.TellBitDepth());
+
     int width = OriginalImage.TellWidth()*2;
     int height = OriginalImage.TellHeight()*2;
         
@@ -144,17 +145,16 @@ int main(int argc, char* argv[]){
 	// parte de la imagen a recibir
 	uint8_t imagen [10][10];
 
-	std::cout << "inicializando imagen" << std::endl;
+	// inicializar imagen
 	for ( int i = 0; i < 10; ++i )
 	{
 		for (int j = 0; j < 10; ++j )
 		{
-			//std::cout << "inicializado" << std::endl;
 			imagen[i][j] = 3;
 		}
 	}
 
-	std::cout << " \n IMAGEN SIN DATOS" << std::endl;
+	std::clog << "\n [MPI]: imagen inicializada" << std::endl;
 	for ( int i = 0; i < 10; ++i )
 	{
 		for (int j = 0; j < 10; ++j )
@@ -164,44 +164,36 @@ int main(int argc, char* argv[]){
 		std::cout << endl;
 	}
 
-	std::cout << " \n Intentado recibir datos mpi" << std::endl;
 
 	MPI_Comm servidor;
 
-
 	int size, rank;
-
 	MPI_Init(&argc,&argv);
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Status status;
 
-	string portServer = "";
+
 	string portname = "1026424832.0;tcp://172.20.43.142:41247+1026424833.0;tcp://172.20.43.142::300";
 
+  	std::clog << "[MPI]: conectando con master" << std::endl;
+	MPI_Comm_connect ( portname.c_str(), MPI_INFO_NULL, 0, MPI_COMM_WORLD, &servidor );
 
+	std::clog << "[MPI]: recibir datos del master" << std::endl;
+	MPI_Recv ( &imagen, 100, MPI_BYTE, MPI_ANY_SOURCE, MPI_ANY_TAG, servidor, &status );
 
-	  std::cout << "Trying connect" << std::endl;
-
-	  MPI_Comm_connect(portname.c_str(), MPI_INFO_NULL, 0, MPI_COMM_WORLD, &servidor);
-
-	MPI_Recv(&imagen, 100, MPI_BYTE, MPI_ANY_SOURCE, MPI_ANY_TAG, servidor, &status);
-
-	
-	  
-	std::cout << "terminado conectar" << std::endl;
-
-			for ( int i = 0; i < 10; ++i )
-		{
-		for (int j = 0; j < 10; ++j )
+	std::clog << "[MPI]: datos obtenidos" << std::endl;
+	for ( int i = 0; i < 10; ++i )
+	{
+		for ( int j = 0; j < 10; ++j )
 		{
 			std::cout << (int)imagen[i][j];
 		}
 		std::cout << endl;
 	}
 
+	std::clog << "[MPI]: finalizar conexión con master" << std::endl;
 	MPI_Comm_disconnect(&servidor);
-
 	MPI_Finalize();
 	
 
