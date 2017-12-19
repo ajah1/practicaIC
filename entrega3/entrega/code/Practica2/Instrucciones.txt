@@ -1,0 +1,17 @@
+El fichero makefile esta configurado para hacer funcionar la practica:
+$ make
+	Se compila el proyecto y se genera el fichero binario dentro de la carpeta "debug"
+$ make run
+	Ejecuta la practica y le pasa por parametro la imagen test.bmp de la carpeta "debug"
+	Generara una imagen resultante en la misma carpeta con el doble de tamaño, nombrada output.bmp
+$ make clean
+	Elimina los archivos generados
+
+
+
+Para comprobar como varia la carga y el tiempo, se recomienda usar la imagen generada como imagen de entrada.
+De esta forma cada vez que se ejecuta la practica la imagen se hace el doble de grande, es decir aumenta por 4 el numero de pixeles.
+Esto trae el problema de que la imagen llegue a varios gigas, en ese momento el sistema no tendra suficiente memoria ram y podria colgarse.
+
+
+El script "cargaPesada.sh" realiza una serie de pruebas donde se puede probar como va aumentando el tiempo segun la carga.
